@@ -1,0 +1,13 @@
+.label IRQline=$c8
+.label TABLE=$2000 {
+}
+.label scrollpos=$8c7
+.label Entry=$80e
+.label SCREEN_RAM=$400
+.label Scrollchars=$881
+.label scrolltextend=$8c6
+.label START_4_ZEILE=$478
+.label IRQ=$858
+.label scrolltext=$8a3
+.label ZP_0=$a
+.label currenttextpos=$8c6
