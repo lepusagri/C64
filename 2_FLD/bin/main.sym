@@ -1,0 +1,9 @@
+.label waitForNewFrame=$855 {
+}
+.label Entry=$80f {
+}
+.label FIXEDLINES=$3
+.label SKIPLINES=$2d {
+}
+.label linesToSkip=$80e
+.label STARTLINE=$48

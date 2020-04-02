@@ -1,0 +1,5 @@
+.label Entry=$80e
+.label IRQ=$843
+.label IRQ_RASTERLINE=$28 {
+}
+.label StableIRQ=$866
