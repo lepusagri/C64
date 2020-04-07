@@ -1,0 +1,16 @@
+parsing
+flex pass 1
+flex pass 2
+flex pass 3
+Output pass
+Writing prg file: start.prg
+
+Memory Map
+----------
+Default-segment:
+  *$0002-$001d Temp vars zero page
+  $0801-$080c Basic
+  $080e-$0a0e Basic End
+  $fff0-$fff2 IRQ Indirect vector
+
+Writing Symbol file: start.sym
