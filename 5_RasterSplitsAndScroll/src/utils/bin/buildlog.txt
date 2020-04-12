@@ -1,19 +1,19 @@
 parsing
-Got 14 errors while executing:
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 15:7) Unknown symbol 'IRQ_LSB'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 16:7) Unknown symbol 'IRQ_MSB'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 19:9) Unknown symbol 'IRQ_Indirect'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 21:9) Unknown symbol 'IRQ_Indirect'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 39:3) Macro command 'StoreState' not defined
+Got 18 errors while executing:
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 19:7) Unknown symbol 'IRQ_LSB'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 20:7) Unknown symbol 'IRQ_MSB'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 23:9) Unknown symbol 'IRQ_Indirect'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 25:9) Unknown symbol 'IRQ_Indirect'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 29:8) Unknown symbol 'SPLIT_1_RASTERLINE'
   ...
 
 
-  lda #<MainIRQ    
-  ldx #>MainIRQ
+  lda #<Split1IRQ    
+  ldx #>Split1IRQ
   sta IRQ_LSB   //$fff1 --> LO_BYTE of the JMP $BEEF 
       ^
 
 Error: Unknown symbol 'IRQ_LSB'
-at line 15, column 7 in irq.asm
+at line 19, column 7 in irq.asm
 
 

@@ -10,7 +10,8 @@ Memory Map
 Default-segment:
   *$0002-$001d Temp vars zero page
   $0801-$080c Basic
-  $080e-$0a0e Basic End
+  $080e-$0aff Basic End
+  $f000-$f027 Charset
   $fff0-$fff2 IRQ Indirect vector
 
 Writing Symbol file: start.sym

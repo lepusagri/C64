@@ -6,6 +6,12 @@ TABLES: {
 	ScreenRowMSB:
 		.fill 25, >[$c000 + i * 40]
 	
+	ColorRowLSB:
+		.fill 25, <[$d800 + i * 40]
+	ColorRowMSB:
+		.fill 25, >[$d800 + i * 40]
+	
+
 	/*BufferLSB:
 		.fill 25, <[MAPLOADER.BUFFER + i * 40]
 	BufferMSB:
