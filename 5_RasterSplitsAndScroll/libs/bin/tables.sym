@@ -1,0 +1,12 @@
+.label TABLES=$2000 {
+  .label PowerOfTwo=$207c
+  .label TileScreenLocations2x2=$2000
+  .label ScreenRowMSB=$201d
+  .label MapRowMSB=$2072
+  .label Plus=$208c
+  .label ColorRowMSB=$204f
+  .label ScreenRowLSB=$2004
+  .label ColorRowLSB=$2036
+  .label MapRowLSB=$2068
+  .label InvPowerOfTwo=$2084
+}

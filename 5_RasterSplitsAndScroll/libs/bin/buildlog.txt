@@ -1,0 +1,11 @@
+parsing
+flex pass 1
+Output pass
+Writing prg file: tables.prg
+
+Memory Map
+----------
+Default-segment:
+  $2000-$218b Default
+
+Writing Symbol file: tables.sym

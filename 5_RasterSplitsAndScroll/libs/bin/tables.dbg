@@ -1,0 +1,42 @@
+<C64debugger version="1.0">
+   <Sources values="INDEX,FILE">
+      0,KickAss.jar:/include/autoinclude.asm
+      1,D:\C64\Projects\5_RasterSplitsAndScroll\libs\tables.asm
+   </Sources>
+
+   <Segment name="Default" dest="" values="START,END,FILE_IDX,LINE1,COL1,LINE2,COL2">
+      <Block name="Default">
+         $2000,$2003,1,3,3,3,7
+         $2004,$201c,1,5,3,5,7
+         $201d,$2035,1,7,3,7,7
+         $2036,$204e,1,10,3,10,7
+         $204f,$2067,1,12,3,12,7
+         $2068,$2071,1,15,3,15,7
+         $2072,$207b,1,17,3,17,7
+         $207c,$2083,1,28,3,28,7
+         $2084,$208b,1,30,3,30,7
+         $208c,$218b,1,33,3,33,7
+      </Block>
+   </Segment>
+
+   <Labels values="SEGMENT,ADDRESS,NAME">
+      Default,$2000,TABLES
+      Default,$2000,TileScreenLocations2x2
+      Default,$2004,ScreenRowLSB
+      Default,$201d,ScreenRowMSB
+      Default,$2036,ColorRowLSB
+      Default,$204f,ColorRowMSB
+      Default,$2068,MapRowLSB
+      Default,$2072,MapRowMSB
+      Default,$207c,PowerOfTwo
+      Default,$2084,InvPowerOfTwo
+      Default,$208c,Plus
+   </Labels>
+
+   <Breakpoints values="SEGMENT,ADDRESS,ARGUMENT">
+   </Breakpoints>
+
+   <Watchpoints values="SEGMENT,ADDRESS1,ADDRESS2,ARGUMENT">
+   </Watchpoints>
+
+</C64debugger>

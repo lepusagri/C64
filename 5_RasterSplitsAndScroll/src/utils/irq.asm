@@ -60,8 +60,8 @@ IRQ: {
 			
 
 			lda XScroll
-			and #%11101111
-			ora #%00001000
+			//and #%11101111
+			ora #%00011000
 			sta $d016
 			dec XScroll
 			bne !+
@@ -107,8 +107,8 @@ IRQ: {
 			nop
 			
 			lda XScrollSplit2
-			and #%00000111
-			ora #%00001000
+			//and #%00000111
+			ora #%00011000
 			sta $d016
 			inc XScrollSplit2
 
@@ -137,7 +137,7 @@ IRQ: {
 			lda #$00
 			sta VIC.BACKGROUND_COLOR
 			
-			lda #%00001000
+			lda #%00011000
 			sta $d016
 			
 			lda #<Split1IRQ    

@@ -1,9 +1,9 @@
 .label SCREEN_RAM = $c000
 .label SPRITE_POINTERS = SCREEN_RAM + $3f8
 .label FIRST_SCREEN_RASTERLINE = 51
-.label SPLIT_1_RASTERLINE = FIRST_SCREEN_RASTERLINE + 7
-.label SPLIT_2_RASTERLINE = SPLIT_1_RASTERLINE + 4*8	//51 + 7 + 32
-.label SPLIT_3_RASTERLINE = SPLIT_2_RASTERLINE + 4*8	
+.label SPLIT_1_RASTERLINE = FIRST_SCREEN_RASTERLINE -1
+.label SPLIT_2_RASTERLINE = SPLIT_1_RASTERLINE + 5*8	
+.label SPLIT_3_RASTERLINE = SPLIT_2_RASTERLINE + 5*8	
 
 
 * = $f000 "Charset"
@@ -21,25 +21,28 @@ BasicUpstart2(Entry)
 #import "utils/irq.asm"
 
 
-//.var music = LoadSid("../assets/sound/cuteplatform.sid")
-//* = $1000 "Music"
-//	.fill music.size, music.getData(i)
-
-
+* = * "Main"
 Entry:
-		lda #$00 //hellblau
+		lda #$03 //hellblau
 		sta VIC.BACKGROUND_COLOR
 		
-		lda #$00 //white	
+		lda #$01 //white	
 		sta VIC.BORDER_COLOR
 
-		lda #$05
+		lda #$0a
 		sta VIC.EXTENDED_BG_COLOR_1
-		lda #$00
+		lda #$0b
 		sta VIC.EXTENDED_BG_COLOR_2
 	
 
 		jsr IRQ.Setup
+
+		/*sei
+		
+		lda #$7f	//Disable CIA IRQ's to prevent crash because 
+		sta $dc0d
+		sta $dd0d
+		*/
 
 		//Bank out BASIC and Kernal ROM
 		lda $01
@@ -59,83 +62,40 @@ Entry:
 		// Screen Memory %0000: $0000 - $03FF in VIC Bank 3 --> $c000 - $ffff
 		lda #%00001100
 		sta VIC.MEMORY_SETUP //$d018
+		
+		//cli
+
+		lda $d016
+		ora #%00011000
+		sta $d016
+
+
+		ldx #10 //row
 
 FillScreen: {
-		lda #<SCREEN_RAM
-		sta ScrMod + 1 
-		lda #>SCREEN_RAM
-		sta ScrMod + 2
-		
-		lda #<VIC.COLOR_RAM
-		sta ColMod + 1
-		lda #>VIC.COLOR_RAM
-		sta ColMod + 2
-
-		ldy #$00
-		ldx #$04
-	
 	!loop:
-		lda #$01
-	ScrMod:
-		sta $BEEF, y
-		lda #$02
-	ColMod:
-		sta $BEEF, y
-		dey
-		bne !loop-
+		lda TABLES.MapRowLSB,x	
+		sta VECTOR1 + 0
+		lda TABLES.MapRowMSB,x
+		sta VECTOR1 + 1
 
-		inc ScrMod +2
-		inc ColMod +2
+		
+		lda TABLES.ScreenRowLSB, x
+		sta VECTOR2 + 0
+		lda TABLES.ScreenRowMSB, x
+		sta VECTOR2 + 1
+
+		ldy #39
+	!:	
+		lda (VECTOR1),y
+		sta (VECTOR2),y
+		dey
+		bpl !-
+
 		dex
-		bne !loop-
+		bpl !loop- 
 
 }
-
-
-	
-ChangeColorSplit1: {
-	ldx #$04
-!loop:
-	
-	lda TABLES.ColorRowLSB, x
-	sta VECTOR1
-	lda TABLES.ColorRowMSB, x
-	sta VECTOR1 + 1 
-	
-	ldy #39
-	!:
-	lda #$05 //color green
-	sta (VECTOR1),y
-	dey
-	bpl !-
-
-	dex
-	bne !loop-
-}	
-
-
-ChangeColorSplit2: {
-	ldx #$08
-!loop:
-	
-	lda TABLES.ColorRowLSB, x
-	sta VECTOR1
-	lda TABLES.ColorRowMSB, x
-	sta VECTOR1 + 1 
-	
-	ldy #39
-	!:
-	lda #$06 //color blue
-	sta (VECTOR1),y
-	dey
-	bpl !-
-
-	dex
-	cpx Split2StartRow
-	bne !loop-
-}	
-
-
 
 
 
@@ -151,6 +111,13 @@ SplitStartRows:
 .label Split2StartRow = SplitStartRows +1
 
 
+
+
+* = $8000 "CharMap"
+CHAR_MAP:
+	.import binary "../assets/maps/map.bin"
+COLOR_MAP:
+	.import binary "../assets/maps/cols.bin"	
 
 
 //This fixes the ghost byte issue on screen shake

@@ -1,28 +1,25 @@
-.label ChangeColorSplit1=$ac7 {
+.label Split2StartRow=$ad8
+.label IRQ=$99a {
+  .label Split3IRQ=$a4e {
+  }
+  .label XScroll=$99a
+  .label Split1IRQ=$9d2 {
+  }
+  .label Split2IRQ=$a0f {
+  }
+  .label Setup=$99b {
+  }
+  .label XScrollSplit2=$a0e
 }
-.label ChangeColorSplit2=$adf {
-}
-.label Split2StartRow=$aff
-.label IRQ=$986 {
-  .label Split3IRQ=$a3e {
-  }
-  .label XScroll=$986
-  .label Split1IRQ=$9be {
-  }
-  .label Split2IRQ=$9fd {
-  }
-  .label Setup=$987 {
-  }
-  .label XScrollSplit2=$9fc
-}
-.label SplitStartRows=$afe
-.label Entry=$a6d
+.label SplitStartRows=$ad7
+.label Entry=$a7d
 .label IRQ_LSB=$fff1
 .label SPLIT_2_RASTERLINE=$5a
 .label CHAR_SET=$f000
 .label IRQ_MSB=$fff2
 .label IRQ_Indirect=$fff0
 .label FIRST_SCREEN_RASTERLINE=$33
+.label CHAR_MAP=$8000
 .label TEMP1=$2
 .label TEMP2=$3
 .label TEMP3=$4
@@ -30,23 +27,25 @@
 .label TEMP5=$6
 .label TEMP6=$7
 .label VECTOR2=$f
-.label SPLIT_3_RASTERLINE=$7a
+.label SPLIT_3_RASTERLINE=$82
 .label TEMP7=$8
 .label VECTOR1=$d
 .label TEMP8=$9
 .label TEMP9=$a
 .label SPRITE_POINTERS=$c3f8
 .label TABLES=$80e {
-  .label PowerOfTwo=$876
+  .label PowerOfTwo=$88a
   .label TileScreenLocations2x2=$80e
   .label ScreenRowMSB=$82b
-  .label Plus=$886
+  .label MapRowMSB=$880
+  .label Plus=$89a
   .label ColorRowMSB=$85d
   .label ScreenRowLSB=$812
   .label ColorRowLSB=$844
-  .label InvPowerOfTwo=$87e
+  .label MapRowLSB=$876
+  .label InvPowerOfTwo=$892
 }
-.label VIC=$986 {
+.label VIC=$99a {
   .label SPRITE_MULTICOLOR_2=$d026
   .label SPRITE_MULTICOLOR_1=$d025
   .label BORDER_COLOR=$d020
@@ -94,13 +93,12 @@
 .label SCREEN_RAM=$c000
 .label VECTOR8=$1b
 .label VECTOR7=$19
-.label SPLIT_1_RASTERLINE=$3a
+.label SPLIT_1_RASTERLINE=$32
 .label VECTOR4=$13
 .label VECTOR3=$11
 .label VECTOR6=$17
-.label FillScreen=$a99 {
-  .label ColMod=$ab8
-  .label ScrMod=$ab3
+.label FillScreen=$ab3 {
 }
+.label COLOR_MAP=$8500
 .label VECTOR5=$15
 .label IRQ_TEMP1=$1d

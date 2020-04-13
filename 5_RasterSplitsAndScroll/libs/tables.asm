@@ -11,6 +11,12 @@ TABLES: {
 	ColorRowMSB:
 		.fill 25, >[$d800 + i * 40]
 	
+	MapRowLSB:
+		.fill 10, <[$8000 + i * 128]
+	MapRowMSB:
+		.fill 10, >[$8000 + i * 128]
+	
+
 
 	/*BufferLSB:
 		.fill 25, <[MAPLOADER.BUFFER + i * 40]
