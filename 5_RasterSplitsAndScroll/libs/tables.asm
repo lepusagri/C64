@@ -12,9 +12,9 @@ TABLES: {
 		.fill 25, >[$d800 + i * 40]
 	
 	MapRowLSB:
-		.fill 10, <[CHAR_MAP+ i * 128]
+		.fill 25, <[CHAR_MAP+ i * 128]
 	MapRowMSB:
-		.fill 10, >[CHAR_MAP + i * 128]
+		.fill 25, >[CHAR_MAP + i * 128]
 	
 	
 

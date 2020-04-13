@@ -28,7 +28,7 @@ Entry:
 		lda #$03 //hellblau
 		sta VIC.BACKGROUND_COLOR
 		
-		lda #$01 //white	
+		lda #$00 //black	
 		sta VIC.BORDER_COLOR
 
 		lda #$0a
@@ -39,12 +39,6 @@ Entry:
 
 		jsr IRQ.Setup
 
-		/*sei
-		
-		lda #$7f	//Disable CIA IRQ's to prevent crash because 
-		sta $dc0d
-		sta $dd0d
-		*/
 
 		//Bank out BASIC and Kernal ROM
 		lda $01
@@ -67,10 +61,11 @@ Entry:
 		
 		
 		lda $d016
-		ora #%00011000
+		and #%11110111	//switch to 38 column mode
+		ora #%00010000	//turn multicolor on
 		sta $d016
 
-		lda #10
+		lda #25
 		sta TEMP1
 		jsr FillScreen
 		
@@ -127,26 +122,57 @@ FillScreen: {
 
 }
 
+//shifts to the left
 ShiftSplit1: {
 		txa			//X-Register = Mapposition 0,1,2,3,....88 
 		clc
 		adc #39		//Akku = 39,40, 41, 42 ,43,....127, 0
-		tax			//wieder ins X-Register
+		tax			//back to X-Register
 		
 		.for(var i=0; i< 5; i++) {					//Row 0 - 5
-			.for(var j=0; j<39; j++) {
-				lda SCREEN_RAM + (40 * i) + j + 1	//1-->0;....;39-->38
+			.for(var j=0; j<38; j++) {
+				lda SCREEN_RAM + (40 * i) + j + 1	//1-->0;....;38-->37
 				sta SCREEN_RAM + (40 * i) + j + 0
 				lda $d800 + (40 * i) + j + 1
 				sta $d800 + (40 * i) + j + 0
 			}
 			//.break
-			//hole neue Spalte aus der Map
+			//get new column from the map
 			lda CHAR_MAP + (128 * i), x			//Mapposition 1 --> $8040; 	
-			sta SCREEN_RAM + (40 * i) + 39
+			sta SCREEN_RAM + (40 * i) + 38
 			tay
 			lda COLOR_MAP, y
-			sta $d800 + (40 * i) + 39
+			sta $d800 + (40 * i) + 38
+
+		}
+		rts
+}
+
+//shifts to the right
+ShiftSplit2: {
+		lda #128
+		sec 
+		sbc MapPositionSplit2
+		tax						//X-Register = Mapposition 1 ...127 		1-->127; 2-->126  (X = 128 - X); 128 -->0; !!!!!129 -->
+		
+
+
+		.for(var i=5; i< 10; i++) {					//Row 5 - 10
+			.for(var j=37; j>=0; j--) {
+				
+				lda SCREEN_RAM + (40 * i) + j + 0	//38-->39;....0-->1
+				sta SCREEN_RAM + (40 * i) + j + 1
+				
+				lda $d800 + (40 * i) + j + 0
+				sta $d800 + (40 * i) + j + 1
+			}
+			//.break
+			//get new column from the map and store it in column 0
+			lda CHAR_MAP + (128 * i), x 	
+			sta SCREEN_RAM + (40 * i)
+			tay
+			lda COLOR_MAP, y
+			sta $d800 + (40 * i)
 
 		}
 		rts
@@ -160,11 +186,16 @@ SplitStartRows:
 
 XScroll:
 	.byte $07
-
-MapPosition:
+XScrollSplit2:
 	.byte $00
 
-UpdateMapFlag:
+MapPositionSplit1:
+	.byte $00
+UpdateMapFlagSplit1:
+	.byte $00
+MapPositionSplit2:
+	.byte $00
+UpdateMapFlagSplit2:
 	.byte $00
 
 
