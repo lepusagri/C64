@@ -45,14 +45,17 @@ IRQ: {
 			stx ModX + 1
 			sty ModY + 1
 
+			lda $d011
+			and #%11110111					//schalte in 24-Zeilenmodus
+			sta $d011
+
 			lda #$06
 			sta $d020
-
+			
 			lda #$0a
 			sta VIC.EXTENDED_BG_COLOR_1
 			lda #$09
 			sta VIC.EXTENDED_BG_COLOR_2
-		
 
 			
 			//inc MapPosition				//only for testing, if pixel scroll is not active
@@ -93,9 +96,18 @@ IRQ: {
 			lda #SPLIT_1_RASTERLINE
 			sta $d012
 
-			lda #$00
+			lda #$01
 			sta $d020
 
+			//warte bis Raster > 255
+			lda #$ff
+			lda $d011
+			bpl *-3
+
+			lda $d011
+			ora #%00001000
+			and #$7f
+			sta $d011
 
 		ModA:
 			lda #$00
@@ -113,6 +125,10 @@ IRQ: {
 			sta ModA + 1
 			stx ModX + 1
 			sty ModY + 1
+
+			//background color to light blue
+			lda #$03
+			sta $d021
 
 			nop
 			nop
@@ -199,7 +215,7 @@ IRQ: {
 			sta $d012
 			
 			lda $d011
-			and #%01111111
+			and #$7f
 			sta $d011	
 
 			asl $d019 //Acknowledging the interrupt
@@ -213,12 +229,15 @@ IRQ: {
 			lda #%00010000
 			sta $d016
 			
+			//background color: black
 			lda #$00
 			sta $d021
 
+			//multicolor1 : grey
 			lda #$0c
 			sta $d022
 
+			//multicolor1 : grey
 			lda #$0f
 			sta $d023
 			
@@ -232,7 +251,7 @@ IRQ: {
 			sta $d012
 			
 			lda $d011
-			and #%01111111
+			and #$7f
 			sta $d011	
 
 			asl $d019 //Acknowledging the interrupt

@@ -1,31 +1,31 @@
-.label MapPositionSplit1=$1dfa
-.label MapPositionSplit2=$1dfc
+.label MapPositionSplit1=$1ea5
+.label MapPositionSplit2=$1ea7
 .label RASTERLINE_250=$fa
-.label Split2StartRow=$1df7
+.label Split2StartRow=$1ea2
 .label IRQ=$9b8 {
-  .label Split3IRQ=$ae7 {
+  .label Split3IRQ=$b05 {
   }
   .label EnterButtomBorderIRQ=$9ee {
-    .label ModX=$a4a
-    .label ModY=$a4c
-    .label ModA=$a48
+    .label ModX=$a63
+    .label ModY=$a65
+    .label ModA=$a61
   }
-  .label Split1IRQ=$a52 {
-    .label ModX=$a96
-    .label ModY=$a98
-    .label ModA=$a94
+  .label Split1IRQ=$a6b {
+    .label ModX=$ab4
+    .label ModY=$ab6
+    .label ModA=$ab2
   }
-  .label Split2IRQ=$a9e {
+  .label Split2IRQ=$abc {
   }
   .label Setup=$9b8 {
   }
 }
-.label SplitStartRows=$1df6
-.label ShiftSplit2=$14c5 {
+.label SplitStartRows=$1ea1
+.label ShiftSplit2=$1570 {
 }
-.label ShiftSplit1=$b96 {
+.label ShiftSplit1=$c41 {
 }
-.label Entry=$b20
+.label Entry=$b3e
 .label IRQ_LSB=$fff1
 .label SPLIT_2_RASTERLINE=$5a
 .label CHAR_SET=$f000
@@ -45,11 +45,11 @@
 .label VECTOR1=$d
 .label TEMP8=$9
 .label TEMP9=$a
-.label UpdateMapFlagSplit2=$1dfd
-.label UpdateMapFlagSplit1=$1dfb
-.label XScroll=$1df8
+.label UpdateMapFlagSplit2=$1ea8
+.label UpdateMapFlagSplit1=$1ea6
+.label XScroll=$1ea3
 .label SPRITE_POINTERS=$c3f8
-.label XScrollSplit2=$1df9
+.label XScrollSplit2=$1ea4
 .label TABLES=$80e {
   .label PowerOfTwo=$8a8
   .label TileScreenLocations2x2=$80e
@@ -114,7 +114,7 @@
 .label VECTOR4=$13
 .label VECTOR3=$11
 .label VECTOR6=$17
-.label FillScreen=$b62 {
+.label FillScreen=$c0d {
   .label ZPScreenPointer=$f
   .label ZPColorPointer=$11
   .label ZPMapPointer=$d

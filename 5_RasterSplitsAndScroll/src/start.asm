@@ -2,9 +2,9 @@
 .label SPRITE_POINTERS = SCREEN_RAM + $3f8
 .label RASTERLINE_250 = 250
 .label FIRST_SCREEN_RASTERLINE = 51
-.label SPLIT_1_RASTERLINE = FIRST_SCREEN_RASTERLINE -1
-.label SPLIT_2_RASTERLINE = SPLIT_1_RASTERLINE + 5*8	
-.label SPLIT_3_RASTERLINE = SPLIT_2_RASTERLINE + 5*8	
+.label SPLIT_1_RASTERLINE = FIRST_SCREEN_RASTERLINE -1	//50
+.label SPLIT_2_RASTERLINE = SPLIT_1_RASTERLINE + 5*8	//90
+.label SPLIT_3_RASTERLINE = SPLIT_2_RASTERLINE + 5*8	//130
 .label Split2StartRow = SplitStartRows +1
 
 
@@ -28,7 +28,7 @@ Entry:
 		lda #$03 //hellblau
 		sta VIC.BACKGROUND_COLOR
 		
-		lda #$00 //black	
+		lda #$01 //black	
 		sta VIC.BORDER_COLOR
 
 		lda #$0a
@@ -69,6 +69,78 @@ Entry:
 		sta TEMP1
 		jsr FillScreen
 		
+		//Sprites
+		lda #$10
+		sta SCREEN_RAM + $03f8 + $00
+		lda #$11
+		sta SCREEN_RAM + $03f8 + $01
+		lda #$12
+		sta SCREEN_RAM + $03f8 + $02
+		sta SCREEN_RAM + $03f8 + $03
+		sta SCREEN_RAM + $03f8 + $04
+		sta SCREEN_RAM + $03f8 + $05
+		sta SCREEN_RAM + $03f8 + $06
+		sta SCREEN_RAM + $03f8 + $07
+
+		lda #$06
+		sta $d027
+		sta $d028
+		sta $d029
+		sta $d02a
+		sta $d02b
+		sta $d02c
+		sta $d02d
+		sta $d02e
+
+		lda #$ff
+		sta $d015
+		lda #$00
+		sta $d01c
+
+
+		//Car left
+		lda #32
+		sta $d000		//Sprite1 X
+		lda #162
+		sta $d001		//Sprite1 Y
+		
+		//Car right
+		lda #50		
+		sta $d002		//Sprite2 X
+				
+		lda #200
+		sta $d003		//Sprite2 Y
+
+		//frog nest
+		lda #32		
+		sta $d004		//Sprite3 X
+		lda #62		
+		sta $d006		//Sprite4 X
+		lda #92		
+		sta $d008		//Sprite5 X
+		lda #122		
+		sta $d00a		//Sprite5 X
+		lda #152		
+		sta $d00c		//Sprite5 X
+		lda #182		
+		sta $d00e		//Sprite5 X
+						
+		lda #25
+		sta $d005		//Sprite2 Y
+		sta $d007		//Sprite2 Y
+		sta $d009		//Sprite2 Y
+		sta $d00b		//Sprite2 Y
+		sta $d00d		//Sprite2 Y
+		sta $d00f		//Sprite2 Y
+
+
+		lda #%00000010
+		sta $d010
+
+				
+
+
+
 		cli
 
 
@@ -197,6 +269,12 @@ MapPositionSplit2:
 	.byte $00
 UpdateMapFlagSplit2:
 	.byte $00
+
+
+* = $c400 "Sprites"
+	.import binary "..//assets/sprites/sprites.bin"
+
+
 
 
 * = $8000 "CharMap"

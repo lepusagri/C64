@@ -1,10 +1,10 @@
 parsing
-Got 24 errors while executing:
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 23:7) Unknown symbol 'IRQ_LSB'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 24:7) Unknown symbol 'IRQ_MSB'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 27:9) Unknown symbol 'IRQ_Indirect'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 29:9) Unknown symbol 'IRQ_Indirect'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 33:8) Unknown symbol 'SPLIT_1_RASTERLINE'
+Got 43 errors while executing:
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 18:7) Unknown symbol 'IRQ_LSB'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 19:7) Unknown symbol 'IRQ_MSB'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 22:9) Unknown symbol 'IRQ_Indirect'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 24:9) Unknown symbol 'IRQ_Indirect'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 28:8) Unknown symbol 'RASTERLINE_250'
   ...
 
 
@@ -14,6 +14,6 @@ Got 24 errors while executing:
       ^
 
 Error: Unknown symbol 'IRQ_LSB'
-at line 23, column 7 in irq.asm
+at line 18, column 7 in irq.asm
 
 
