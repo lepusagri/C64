@@ -1,8 +1,5 @@
 IRQ: {
 
-	XScroll:
-		.byte $07
-		
 
 
 	Setup: {
@@ -16,8 +13,8 @@ IRQ: {
 		ora #%00000001	
 		sta $d01a
 
-		lda #<Split1IRQ    
-		ldx #>Split1IRQ
+		lda #<EnterButtomBorderIRQ    
+		ldx #>EnterButtomBorderIRQ
 		sta IRQ_LSB   //$fff1 --> LO_BYTE of the JMP $BEEF 
 		stx IRQ_MSB	// $fff2  --> HI_BYTE of the JMP $BEEF
 
@@ -28,24 +25,64 @@ IRQ: {
 		sta $ffff
 		// wenn also der IRQ ausgelöst wird, dann wird immer nach $fff0 gesprungen. Dort wartet ein JMP $BEEF Befehl
 
-		lda #SPLIT_1_RASTERLINE  
+		lda #RASTERLINE_250
 		sta $d012
 		
 		lda $d011
 		and #$7f
 		sta $d011	
 
+
 		asl $d019
-		cli
+		//cli
 		rts
+	}
+
+
+	EnterButtomBorderIRQ: {
+		sta ModA + 1
+		stx ModX + 1
+		sty ModY + 1
+
+		//nur zum Testen (wenn ohne pixel scroll)
+		//inc MapPosition
+			
+		
+		lda UpdateMapFlag
+		beq !noshift+
+		dec UpdateMapFlag
+		ldx MapPosition
+		cpx #89
+		bne !+
+			//MapPosition 89
+			ldx #$d9
+			stx MapPosition
+		!:
+		jsr ShiftSplit1
+	
+	!noshift:		
+		lda #<Split1IRQ    
+		ldx #>Split1IRQ
+		sta IRQ_LSB   // $fff1 --> selfmod code (JMP $BEEF) at $fff0
+		stx IRQ_MSB	// $fff2 --> selfmod code (JMP $BEEF) at $fff0
+
+		lda #SPLIT_1_RASTERLINE
+		sta $d012
+		
+
+		ModA:
+			lda #$00
+		ModX:
+			ldx #$00
+		ModY:
+			ldy #$00
+			asl $d019
+			rti
 	}
 
 
 	Split1IRQ: {		
 		:StoreState()
-
-			//ldx #$0c //grey
-			//stx VIC.BACKGROUND_COLOR
 
 			nop
 			nop
@@ -58,21 +95,28 @@ IRQ: {
 			nop
 			nop
 			
-
-			lda XScroll
-			//and #%11101111
+			lda XScroll			//starts with 7,6.... (scrolls to the left side)
+			//and #%11111111
 			ora #%00011000
 			sta $d016
+			.break
 			dec XScroll
 			bne !+
-
+				//now $d016 X-scroll is 0
+				//X-Scroll-Offset is now 0
+				inc MapPosition
+				inc UpdateMapFlag
+				//for next time
+				lda #7
+				sta XScroll
+			
 			!:
-			lda #<Split2IRQ    
-			ldx #>Split2IRQ
+			lda #<EnterButtomBorderIRQ    
+			ldx #>EnterButtomBorderIRQ
 			sta IRQ_LSB   // $fff1 --> selfmod code (JMP $BEEF) at $fff0
 			stx IRQ_MSB	// $fff2 --> selfmod code (JMP $BEEF) at $fff0
 
-			lda #SPLIT_2_RASTERLINE
+			lda #RASTERLINE_250
 			sta $d012
 			
 			lda $d011
@@ -91,10 +135,7 @@ IRQ: {
 
 	Split2IRQ: {
 		:StoreState()
-			//Reset Values set by IRQ	
-			lda #$00
-			sta VIC.BACKGROUND_COLOR
-			
+			.break
 			nop
 			nop
 			nop
@@ -133,19 +174,16 @@ IRQ: {
 
 	Split3IRQ: {
 		:StoreState()
-			//Reset Values set by IRQ	
-			lda #$00
-			sta VIC.BACKGROUND_COLOR
-			
+			.break
 			lda #%00011000
 			sta $d016
 			
-			lda #<Split1IRQ    
-			ldx #>Split1IRQ
+			lda #<EnterButtomBorderIRQ 
+			ldx #>EnterButtomBorderIRQ
 			sta IRQ_LSB   // 0314
 			stx IRQ_MSB	// 0315
 
-			lda #SPLIT_1_RASTERLINE  
+			lda #RASTERLINE_250  
 			sta $d012
 			
 			lda $d011

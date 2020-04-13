@@ -1,9 +1,11 @@
 .label SCREEN_RAM = $c000
 .label SPRITE_POINTERS = SCREEN_RAM + $3f8
+.label RASTERLINE_250 = 250
 .label FIRST_SCREEN_RASTERLINE = 51
 .label SPLIT_1_RASTERLINE = FIRST_SCREEN_RASTERLINE -1
 .label SPLIT_2_RASTERLINE = SPLIT_1_RASTERLINE + 5*8	
 .label SPLIT_3_RASTERLINE = SPLIT_2_RASTERLINE + 5*8	
+.label Split2StartRow = SplitStartRows +1
 
 
 * = $f000 "Charset"
@@ -31,7 +33,7 @@ Entry:
 
 		lda #$0a
 		sta VIC.EXTENDED_BG_COLOR_1
-		lda #$0b
+		lda #$09
 		sta VIC.EXTENDED_BG_COLOR_2
 	
 
@@ -63,40 +65,16 @@ Entry:
 		lda #%00001100
 		sta VIC.MEMORY_SETUP //$d018
 		
-		//cli
-
+		
 		lda $d016
 		ora #%00011000
 		sta $d016
 
-
-		ldx #10 //row
-
-FillScreen: {
-	!loop:
-		lda TABLES.MapRowLSB,x	
-		sta VECTOR1 + 0
-		lda TABLES.MapRowMSB,x
-		sta VECTOR1 + 1
-
+		lda #10
+		sta TEMP1
+		jsr FillScreen
 		
-		lda TABLES.ScreenRowLSB, x
-		sta VECTOR2 + 0
-		lda TABLES.ScreenRowMSB, x
-		sta VECTOR2 + 1
-
-		ldy #39
-	!:	
-		lda (VECTOR1),y
-		sta (VECTOR2),y
-		dey
-		bpl !-
-
-		dex
-		bpl !loop- 
-
-}
-
+		cli
 
 
 	//Inf loop
@@ -105,12 +83,89 @@ FillScreen: {
 		jmp !Loop- 
 	
 
+FillScreen: {
+	!loop:
+		.label ZPMapPointer = VECTOR1
+		.label ZPScreenPointer = VECTOR2
+		.label ZPColorPointer = VECTOR3
+		
+		ldx TEMP1
+		
+		lda TABLES.MapRowLSB,x	
+		sta ZPMapPointer + 0
+		lda TABLES.MapRowMSB,x
+		sta ZPMapPointer + 1
+		
+		lda TABLES.ScreenRowLSB, x
+		sta ZPScreenPointer + 0
+		lda TABLES.ScreenRowMSB, x
+		sta ZPScreenPointer + 1
+
+		lda TABLES.ColorRowLSB, x
+		sta ZPColorPointer + 0
+		lda TABLES.ColorRowMSB, x
+		sta ZPColorPointer + 1
+
+
+		ldy #39
+	!:	
+		lda (ZPMapPointer),y
+		sta (ZPScreenPointer),y
+		
+		//color
+		tax 					//char_id --> X-Reg.
+		lda COLOR_MAP,x			//get the defined color of the char_id
+		sta (ZPColorPointer),y	//set color
+
+		dey
+		bpl !-
+
+		dec TEMP1
+		bpl !loop- 
+
+		rts
+
+}
+
+ShiftSplit1: {
+		txa			//X-Register = Mapposition 0,1,2,3,....88 
+		clc
+		adc #39		//Akku = 39,40, 41, 42 ,43,....127, 0
+		tax			//wieder ins X-Register
+		
+		.for(var i=0; i< 5; i++) {					//Row 0 - 5
+			.for(var j=0; j<39; j++) {
+				lda SCREEN_RAM + (40 * i) + j + 1	//1-->0;....;39-->38
+				sta SCREEN_RAM + (40 * i) + j + 0
+				lda $d800 + (40 * i) + j + 1
+				sta $d800 + (40 * i) + j + 0
+			}
+			//.break
+			//hole neue Spalte aus der Map
+			lda CHAR_MAP + (128 * i), x			//Mapposition 1 --> $8040; 	
+			sta SCREEN_RAM + (40 * i) + 39
+			tay
+			lda COLOR_MAP, y
+			sta $d800 + (40 * i) + 39
+
+		}
+		rts
+}
+
+
 SplitStartRows:
 	.byte $01, $04
 
-.label Split2StartRow = SplitStartRows +1
 
 
+XScroll:
+	.byte $07
+
+MapPosition:
+	.byte $00
+
+UpdateMapFlag:
+	.byte $00
 
 
 * = $8000 "CharMap"

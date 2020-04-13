@@ -10,8 +10,8 @@ Memory Map
 Default-segment:
   *$0002-$001d Temp vars zero page
   $0801-$080c Basic
-  $080e-$0a7c Basic End
-  $0a7d-$0ad8 Main
+  $080e-$0ab4 Basic End
+  $0ab5-$1498 Main
   $8000-$850e CharMap
   $f000-$f077 Charset
   $fff0-$fff2 IRQ Indirect vector
