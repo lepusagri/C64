@@ -10,8 +10,8 @@ Memory Map
 Default-segment:
   *$0002-$001d Temp vars zero page
   $0801-$080c Basic
-  $080e-$0b3d Basic End
-  $0b3e-$1ea8 Main
+  $080e-$0b49 Basic End
+  $0b4a-$1975 Main
   $8000-$8c97 CharMap
   $c400-$cbff Sprites
   $f000-$f0bf Charset

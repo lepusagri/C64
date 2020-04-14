@@ -1,19 +1,19 @@
 parsing
-Got 43 errors while executing:
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 18:7) Unknown symbol 'IRQ_LSB'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 19:7) Unknown symbol 'IRQ_MSB'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 22:9) Unknown symbol 'IRQ_Indirect'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 24:9) Unknown symbol 'IRQ_Indirect'
-  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 28:8) Unknown symbol 'RASTERLINE_250'
+Got 39 errors while executing:
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 6:25) Unknown symbol 'SplitStartRows'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 23:7) Unknown symbol 'IRQ_LSB'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 24:7) Unknown symbol 'IRQ_MSB'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 27:9) Unknown symbol 'IRQ_Indirect'
+  (D:\C64\Projects\5_RasterSplitsAndScroll\src\utils\irq.asm 29:9) Unknown symbol 'IRQ_Indirect'
   ...
 
+.label SPLIT_1_RASTERLINE = FIRST_SCREEN_RASTERLINE -1 //50
+.label SPLIT_2_RASTERLINE = SPLIT_1_RASTERLINE + 5*8 //90
+.label SPLIT_3_RASTERLINE = SPLIT_2_RASTERLINE + 5*8 //130
+.label Split2StartRow = SplitStartRows +1
+                        ^
 
-  lda #<EnterButtomBorderIRQ    
-  ldx #>EnterButtomBorderIRQ
-  sta IRQ_LSB   //$fff1 --> LO_BYTE of the JMP $BEEF 
-      ^
-
-Error: Unknown symbol 'IRQ_LSB'
-at line 18, column 7 in irq.asm
+Error: Unknown symbol 'SplitStartRows'
+at line 6, column 25 in irq.asm
 
 

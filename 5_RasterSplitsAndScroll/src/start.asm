@@ -1,16 +1,7 @@
 .label SCREEN_RAM = $c000
 .label SPRITE_POINTERS = SCREEN_RAM + $3f8
-.label RASTERLINE_250 = 250
-.label FIRST_SCREEN_RASTERLINE = 51
-.label SPLIT_1_RASTERLINE = FIRST_SCREEN_RASTERLINE -1	//50
-.label SPLIT_2_RASTERLINE = SPLIT_1_RASTERLINE + 5*8	//90
-.label SPLIT_3_RASTERLINE = SPLIT_2_RASTERLINE + 5*8	//130
-.label Split2StartRow = SplitStartRows +1
 
 
-* = $f000 "Charset"
-	CHAR_SET:
-		.import binary "../assets/maps/charset.bin" 
 
 #import "zeropage.asm"
 
@@ -25,10 +16,8 @@ BasicUpstart2(Entry)
 
 * = * "Main"
 Entry:
-		lda #$03 //hellblau
+		lda #$00 //black
 		sta VIC.BACKGROUND_COLOR
-		
-		lda #$01 //black	
 		sta VIC.BORDER_COLOR
 
 		lda #$0a
@@ -65,11 +54,12 @@ Entry:
 		ora #%00010000	//turn multicolor on
 		sta $d016
 
-		lda #25
-		sta TEMP1
+		ldx #25
 		jsr FillScreen
 		
-		//Sprites
+		//----------------------------------------
+		// Initialize sprites
+		//----------------------------------------
 		lda #$10
 		sta SCREEN_RAM + $03f8 + $00
 		lda #$11
@@ -92,8 +82,8 @@ Entry:
 		sta $d02d
 		sta $d02e
 
-		lda #$ff
-		sta $d015
+		
+		//sprite all singlecolor
 		lda #$00
 		sta $d01c
 
@@ -137,24 +127,62 @@ Entry:
 		lda #%00000010
 		sta $d010
 
-				
-
-
-
-		cli
+		//enable only the car sprites
+		lda #%00000011
+		sta $d015
+		
+		cli			//enable interrupts
+		
 
 
 	//Inf loop
 	!Loop:
 		nop
+
+
+		lda UpdateMapFlagSplit1
+		beq !noshiftsplit1+
+			dec UpdateMapFlagSplit1
+			ldx MapPositionSplit1
+			cpx #89						//MapPosition 89? (map ends here, because right side is 89 + 39= 128)
+			bne !+
+				ldx #$d9 				//negative value -39 (in ShiftSplit1 + 39 = 0), map start from 0 again
+				stx MapPositionSplit1
+			!:
+			//---------------------------
+			// SHIFT MAP of the Split 1
+			//---------------------------
+			jsr ShiftSplit1
+	
+	
+	!noshiftsplit1:
+		lda UpdateMapFlagSplit2
+		beq !noshiftsplit2+				//if UpdateMapFlag is set --> shift the map
+			dec UpdateMapFlagSplit2		//reset UpdateMapFlag
+			ldx MapPositionSplit2
+			cpx #129
+			bne !+
+				lda #$01
+				sta MapPositionSplit2
+			!:
+			//---------------------------
+			// SHIFT MAP of the Split 2
+			//---------------------------
+			jsr ShiftSplit2
+
+	!noshiftsplit2:
+	
 		jmp !Loop- 
 	
 
 FillScreen: {
+	.label ZPMapPointer = VECTOR1
+	.label ZPScreenPointer = VECTOR2
+	.label ZPColorPointer = VECTOR3
+	
+	stx TEMP1	//amount of rows (25)
+		
 	!loop:
-		.label ZPMapPointer = VECTOR1
-		.label ZPScreenPointer = VECTOR2
-		.label ZPColorPointer = VECTOR3
 		
 		ldx TEMP1
 		
@@ -196,12 +224,16 @@ FillScreen: {
 
 //shifts to the left
 ShiftSplit1: {
+		//for debugging
+		lda #$07			//border color to yellow
+		sta $d020
+			
 		txa			//X-Register = Mapposition 0,1,2,3,....88 
 		clc
 		adc #39		//Akku = 39,40, 41, 42 ,43,....127, 0
 		tax			//back to X-Register
 		
-		.for(var i=0; i< 5; i++) {					//Row 0 - 5
+		.for(var i=0; i< 3; i++) {					//Row 0 - 3
 			.for(var j=0; j<38; j++) {
 				lda SCREEN_RAM + (40 * i) + j + 1	//1-->0;....;38-->37
 				sta SCREEN_RAM + (40 * i) + j + 0
@@ -217,11 +249,19 @@ ShiftSplit1: {
 			sta $d800 + (40 * i) + 38
 
 		}
+
+		lda #$00			//border color to black
+		sta $d020
+
 		rts
 }
 
 //shifts to the right
 ShiftSplit2: {
+		//for debugging
+		lda #$05			//border color to green
+		sta $d020
+
 		lda #128
 		sec 
 		sbc MapPositionSplit2
@@ -229,7 +269,7 @@ ShiftSplit2: {
 		
 
 
-		.for(var i=5; i< 10; i++) {					//Row 5 - 10
+		.for(var i=5; i< 9; i++) {					//Row 5 - 8
 			.for(var j=37; j>=0; j--) {
 				
 				lda SCREEN_RAM + (40 * i) + j + 0	//38-->39;....0-->1
@@ -247,6 +287,9 @@ ShiftSplit2: {
 			sta $d800 + (40 * i)
 
 		}
+		lda #$00			//border color to black
+		sta $d020
+
 		rts
 }
 
@@ -256,7 +299,7 @@ SplitStartRows:
 
 
 
-XScroll:
+XScrollSplit1:
 	.byte $07
 XScrollSplit2:
 	.byte $00
@@ -274,15 +317,15 @@ UpdateMapFlagSplit2:
 * = $c400 "Sprites"
 	.import binary "..//assets/sprites/sprites.bin"
 
-
-
-
 * = $8000 "CharMap"
 CHAR_MAP:
 	.import binary "../assets/maps/map.bin"
 COLOR_MAP:
 	.import binary "../assets/maps/cols.bin"	
 
+* = $f000 "Charset"
+	CHAR_SET:
+		.import binary "../assets/maps/charset.bin" 
 
 //This fixes the ghost byte issue on screen shake
 //By forcing all IRQs to run indirectly from the last 

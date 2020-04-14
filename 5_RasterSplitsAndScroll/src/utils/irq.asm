@@ -1,6 +1,11 @@
+.label RASTERLINE_250 = 250
+.label FIRST_SCREEN_RASTERLINE = 51
+.label SPLIT_1_RASTERLINE = FIRST_SCREEN_RASTERLINE -1	//50
+.label SPLIT_2_RASTERLINE = SPLIT_1_RASTERLINE + 5*8	//90
+.label SPLIT_3_RASTERLINE = SPLIT_2_RASTERLINE + 5*8	//130
+.label Split2StartRow = SplitStartRows +1
+
 IRQ: {
-
-
 
 	Setup: {
 		sei
@@ -13,8 +18,8 @@ IRQ: {
 		ora #%00000001	
 		sta $d01a
 
-		lda #<EnterButtomBorderIRQ    
-		ldx #>EnterButtomBorderIRQ
+		lda #<EnterTopBorderIRQ    
+		ldx #>EnterTopBorderIRQ
 		sta IRQ_LSB   //$fff1 --> LO_BYTE of the JMP $BEEF 
 		stx IRQ_MSB	// $fff2  --> HI_BYTE of the JMP $BEEF
 
@@ -25,7 +30,7 @@ IRQ: {
 		sta $ffff
 		// wenn also der IRQ ausgelöst wird, dann wird immer nach $fff0 gesprungen. Dort wartet ein JMP $BEEF Befehl
 
-		lda #RASTERLINE_250
+		lda #0
 		sta $d012
 		
 		lda $d011
@@ -38,77 +43,33 @@ IRQ: {
 		rts
 	}
 
-	//info: raster is out of the 'character screen' (40x25)
-	//here we can shift character, change colors, .... (Attention: finish before Rasterline 51)
-	EnterButtomBorderIRQ: {
+
+	//Rater at 0: enable top border sprites
+	EnterTopBorderIRQ: {		
 			sta ModA + 1
 			stx ModX + 1
 			sty ModY + 1
 
-			lda $d011
-			and #%11110111					//schalte in 24-Zeilenmodus
-			sta $d011
-
-			lda #$06
-			sta $d020
+			//enable all sprites
+			lda #%11111111
+			sta $d015
+		
 			
-			lda #$0a
-			sta VIC.EXTENDED_BG_COLOR_1
-			lda #$09
-			sta VIC.EXTENDED_BG_COLOR_2
-
-			
-			//inc MapPosition				//only for testing, if pixel scroll is not active
-			
-			lda UpdateMapFlagSplit1
-			beq !noshiftsplit1+
-				dec UpdateMapFlagSplit1
-				ldx MapPositionSplit1
-				cpx #89						//MapPosition 89?
-				bne !+
-					ldx #$d9 				//negative value -39 (in ShiftSplit1 + 39 = 0), map start from 0 again
-					stx MapPositionSplit1
-		!:
-			jsr ShiftSplit1
-	
-	
-		!noshiftsplit1:
-			lda UpdateMapFlagSplit2
-			beq !noshiftsplit2+				//if UpdateMapFlag is set --> shift the map
-				dec UpdateMapFlagSplit2		//reset UpdateMapFlag
-				
-				ldx MapPositionSplit2
-				cpx #129
-				bne !+
-					lda #$01
-					sta MapPositionSplit2
-
-				!:
-				jsr ShiftSplit2
-
-
-		!noshiftsplit2:
-			lda #<Split1IRQ    
-			ldx #>Split1IRQ
-			sta IRQ_LSB   					// $fff1 --> selfmod code (JMP $BEEF) at $fff0
-			stx IRQ_MSB						// $fff2 --> selfmod code (JMP $BEEF) at $fff0
-
-			lda #SPLIT_1_RASTERLINE
-			sta $d012
-
-			lda #$01
-			sta $d020
-
-			//warte bis Raster > 255
-			lda #$ff
 			lda $d011
-			bpl *-3
-
-			lda $d011
-			ora #%00001000
+			ora #%00001000	// 25 Zeilenmodus
 			and #$7f
 			sta $d011
 
+					
+			lda #<Split1IRQ    
+			ldx #>Split1IRQ
+			sta IRQ_LSB   // $fff1 --> selfmod code (JMP $BEEF) at $fff0
+			stx IRQ_MSB	// $fff2 --> selfmod code (JMP $BEEF) at $fff0
+
+			lda #SPLIT_1_RASTERLINE
+			sta $d012
+			
+			
 		ModA:
 			lda #$00
 		ModX:
@@ -116,18 +77,22 @@ IRQ: {
 		ModY:
 			ldy #$00
 			asl $d019
-	
 			rti
 	}
 
-
+	//Rater at 50 : scroll to left (1 line before screen)
 	Split1IRQ: {		
 			sta ModA + 1
 			stx ModX + 1
 			sty ModY + 1
 
-			//background color to light blue
-			lda #$03
+			//disable the top border sprites (because of ghosting in buttom border)
+			lda #%00000011
+			sta $d015
+		
+
+			//background color to blue
+			lda #$06//#$03
 			sta $d021
 
 			nop
@@ -141,10 +106,12 @@ IRQ: {
 			nop
 			nop
 		
-			lda XScroll			//starts with 7,6.... (scrolls to the left side)
+			lda XScrollSplit1
+			//starts with 7,6.... (scrolls to the left side)
 			ora #%00010000
 			sta $d016
-			dec XScroll
+			dec XScrollSplit1
+
 			bne !+
 				//now $d016 X-scroll is 0
 				//X-Scroll-Offset is now 0
@@ -152,7 +119,7 @@ IRQ: {
 				inc UpdateMapFlagSplit1
 				//for next time
 				lda #7
-				sta XScroll
+				sta XScrollSplit1
 		
 		!:
 			lda #<Split2IRQ    
@@ -177,20 +144,11 @@ IRQ: {
 			rti
 	}
 
-
-
+	//Rater at 90: scroll to right (1 line before 6th char row)
 	Split2IRQ: {
-		:StoreState()
-			nop
-			nop
-			nop
-			nop
-			nop
-			nop
-			nop
-			nop
-			nop
-			nop
+			sta ModA + 1
+			stx ModX + 1
+			sty ModY + 1
 			
 			lda XScrollSplit2
 			ora #%00010000
@@ -214,18 +172,36 @@ IRQ: {
 			lda #SPLIT_3_RASTERLINE 
 			sta $d012
 			
-			lda $d011
-			and #$7f
-			sta $d011	
-
-			asl $d019 //Acknowledging the interrupt
-		:RestoreState()
-		rti
+		ModA:
+			lda #$00
+		ModX:
+			ldx #$00
+		ModY:
+			ldy #$00
+			asl $d019
+			rti
 	}
 
 
+	//Rater at 130: no scrolling (1 line before 11th char row)
 	Split3IRQ: {
-		:StoreState()
+			sta ModA + 1
+			stx ModX + 1
+			sty ModY + 1
+			
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			
+			
 			lda #%00010000
 			sta $d016
 			
@@ -244,20 +220,91 @@ IRQ: {
 
 			lda #<EnterButtomBorderIRQ 
 			ldx #>EnterButtomBorderIRQ
-			sta IRQ_LSB   // 0314
-			stx IRQ_MSB	// 0315
+			sta IRQ_LSB   
+			stx IRQ_MSB	
 
-			lda #RASTERLINE_250  
+			lda #RASTERLINE_250 
 			sta $d012
-			
-			lda $d011
-			and #$7f
-			sta $d011	
 
-			asl $d019 //Acknowledging the interrupt
-		:RestoreState()
-		rti
+		ModA:
+			lda #$00
+		ModX:
+			ldx #$00
+		ModY:
+			ldy #$00
+			asl $d019
+			rti
 	}
+
+
+	//info: raster is outside of the 'character screen' (40x25)
+	//here we can shift character, change colors, .... (Attention: finish before Rasterline 51)
+	EnterButtomBorderIRQ: {
+			sta ModA + 1
+			stx ModX + 1
+			sty ModY + 1
+
+			lda $d011
+			and #%11110111					//schalte in 24-Zeilenmodus
+			sta $d011
+
+			//sprite 1 -X:
+			inc $d000		//255->0
+			bne !+
+				lda $d010
+				eor #%00000001
+				sta $d010
+			!:
+
+			dec $d002
+			bne !+
+				lda $d010
+				eor #%00000010
+				sta $d010
+			!:
+
+
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			nop
+			
+
+
+
+			lda #$0a
+			sta VIC.EXTENDED_BG_COLOR_1
+			lda #$09
+			sta VIC.EXTENDED_BG_COLOR_2
+			
+			
+			lda #<EnterTopBorderIRQ    
+			ldx #>EnterTopBorderIRQ
+			sta IRQ_LSB   					// $fff1 --> selfmod code (JMP $BEEF) at $fff0
+			stx IRQ_MSB						// $fff2 --> selfmod code (JMP $BEEF) at $fff0
+
+			lda #0
+			sta $d012
+
+
+		
+		ModA:
+			lda #$00
+		ModX:
+			ldx #$00
+		ModY:
+			ldy #$00
+			asl $d019
+	
+			rti
+	}
+
 
 
 }

@@ -1,31 +1,42 @@
-.label MapPositionSplit1=$1ea5
-.label MapPositionSplit2=$1ea7
+.label MapPositionSplit1=$1972
+.label MapPositionSplit2=$1974
 .label RASTERLINE_250=$fa
-.label Split2StartRow=$1ea2
+.label Split2StartRow=$196f
 .label IRQ=$9b8 {
-  .label Split3IRQ=$b05 {
+  .label Split3IRQ=$ab1 {
+    .label ModX=$aea
+    .label ModY=$aec
+    .label ModA=$ae8
   }
-  .label EnterButtomBorderIRQ=$9ee {
-    .label ModX=$a63
-    .label ModY=$a65
-    .label ModA=$a61
+  .label EnterTopBorderIRQ=$9ee {
+    .label ModX=$a17
+    .label ModY=$a19
+    .label ModA=$a15
   }
-  .label Split1IRQ=$a6b {
-    .label ModX=$ab4
-    .label ModY=$ab6
-    .label ModA=$ab2
+  .label EnterButtomBorderIRQ=$af2 {
+    .label ModX=$b42
+    .label ModY=$b44
+    .label ModA=$b40
   }
-  .label Split2IRQ=$abc {
+  .label Split1IRQ=$a1f {
+    .label ModX=$a6d
+    .label ModY=$a6f
+    .label ModA=$a6b
+  }
+  .label Split2IRQ=$a75 {
+    .label ModX=$aa9
+    .label ModY=$aab
+    .label ModA=$aa7
   }
   .label Setup=$9b8 {
   }
 }
-.label SplitStartRows=$1ea1
-.label ShiftSplit2=$1570 {
+.label SplitStartRows=$196e
+.label ShiftSplit2=$1208 {
 }
-.label ShiftSplit1=$c41 {
+.label ShiftSplit1=$c79 {
 }
-.label Entry=$b3e
+.label Entry=$b4a
 .label IRQ_LSB=$fff1
 .label SPLIT_2_RASTERLINE=$5a
 .label CHAR_SET=$f000
@@ -40,16 +51,15 @@
 .label TEMP5=$6
 .label TEMP6=$7
 .label VECTOR2=$f
-.label SPLIT_3_RASTERLINE=$82
 .label TEMP7=$8
 .label VECTOR1=$d
+.label SPLIT_3_RASTERLINE=$82
 .label TEMP8=$9
 .label TEMP9=$a
-.label UpdateMapFlagSplit2=$1ea8
-.label UpdateMapFlagSplit1=$1ea6
-.label XScroll=$1ea3
+.label UpdateMapFlagSplit2=$1975
+.label UpdateMapFlagSplit1=$1973
 .label SPRITE_POINTERS=$c3f8
-.label XScrollSplit2=$1ea4
+.label XScrollSplit2=$1971
 .label TABLES=$80e {
   .label PowerOfTwo=$8a8
   .label TileScreenLocations2x2=$80e
@@ -62,6 +72,7 @@
   .label MapRowLSB=$876
   .label InvPowerOfTwo=$8b0
 }
+.label XScrollSplit1=$1970
 .label VIC=$9b8 {
   .label SPRITE_MULTICOLOR_2=$d026
   .label SPRITE_MULTICOLOR_1=$d025
@@ -114,7 +125,7 @@
 .label VECTOR4=$13
 .label VECTOR3=$11
 .label VECTOR6=$17
-.label FillScreen=$c0d {
+.label FillScreen=$c43 {
   .label ZPScreenPointer=$f
   .label ZPColorPointer=$11
   .label ZPMapPointer=$d
